@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cavaleiros do Zodíaco</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Custom CSS for 3D Cube Carousel -->
+    <style>
+      .carousel-container {
+        perspective: 1000px;
+        height: 400px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: relative;
+      }
+      .carousel-item {
+        position: absolute;
+        width: 300px;
+        height: 300px;
+        transition: transform 0.5s ease, opacity 0.5s ease, filter 0.5s ease;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+      }
+      .carousel-item img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 8px;
+      }
+      .carousel-item.central {
+        transform: translateZ(100px) scale(1);
+        opacity: 1;
+        filter: blur(0);
+        z-index: 10;
+      }
+      .carousel-item.side {
+        transform: translateZ(-50px) scale(0.8);
+        opacity: 0.7;
+        filter: blur(2px);
+        z-index: 5;
+      }
+      .carousel-item.far {
+        transform: translateZ(-100px) scale(0.6);
+        opacity: 0.4;
+        filter: blur(4px);
+        z-index: 1;
+      }
+    </style>
+  </head>
+  <body class="bg-gray-900 text-white font-sans">
+    <div id="root"></div>
+    <!-- React and Babel CDNs -->
+    <script src="https://cdn.jsdelivr.net/npm/react@18.2.0/umd/react.development.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/react-dom@18.2.0/umd/react-dom.development.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.22.5/babel.min.js"></script>
+    <!-- Main JSX Script -->
+    <script type="text/babel">
+      // Navbar Component
+      function Navbar() {
+        const [isOpen, setIsOpen] = React.useState(false);
+
+        return (
+          <nav className='fixed top-0 w-full bg-gray-800 bg-opacity-90 z-50'>
+            <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
+              <div className='flex justify-between h-16'>
+                <div className='flex'>
+                  <div className='flex-shrink-0 flex items-center'>
+                    <h1 className='text-xl font-bold'>Cavaleiros do Zodíaco</h1>
+                  </div>
+                </div>
+                <div className='hidden sm:ml-6 sm:flex sm:items-center'>
+                  <div className='flex space-x-4'>
+                    {[
+                      'Home',
+                      'História',
+                      'Wallpapers',
+                      'Trailer',
+                      'Personagens',
+                      'Filmes',
+                    ].map((item) => (
+                      <a
+                        key={item}
+                        href={`#${item.toLowerCase()}`}
+                        className='px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-700'
+                      >
+                        {item}
+                      </a>
+                    ))}
+                  </div>
+                </div>
+                <div className='-mr-2 flex items-center sm:hidden'>
+                  <button
+                    onClick={() => setIsOpen(!isOpen)}
+                    className='inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-700 focus:outline-none'
+                  >
+                    <span className='sr-only'>Open main menu</span>
+                    {isOpen ? (
+                      <svg
+                        className='h-6 w-6'
+                        xmlns='http://www.w3.org/2000/svg'
+                        fill='none'
+                        viewBox='0 0 24 24'
+                        stroke='currentColor'
+                      >
+                        <path
+                          strokeLinecap='round'
+                          strokeLinejoin='round'
+                          strokeWidth='2'
+                          d='M6 18L18 6M6 6l12 12'
+                        />
+                      </svg>
+                    ) : (
+                      <svg
+                        className='h-6 w-6'
+                        xmlns='http://www.w3.org/2000/svg'
+                        fill='none'
+                        viewBox='0 0 24 24'
+                        stroke='currentColor'
+                      >
+                        <path
+                          strokeLinecap='round'
+                          strokeLinejoin='round'
+                          strokeWidth='2'
+                          d='M4 6h16M4 12h16M4 18h16'
+                        />
+                      </svg>
+                    )}
+                  </button>
+                </div>
+              </div>
+            </div>
+            {isOpen && (
+              <div className='sm:hidden'>
+                <div className='pt-2 pb-3 space-y-1'>
+                  {[
+                    'Home',
+                    'História',
+                    'Wallpapers',
+                    'Trailer',
+                    'Personagens',
+                    'Filmes',
+                  ].map((item) => (
+                    <a
+                      key={item}
+                      href={`#${item.toLowerCase()}`}
+                      className='block px-3 py-2 rounded-md text-base font-medium hover:bg-gray-700'
+                      onClick={() => setIsOpen(false)}
+                    >
+                      {item}
+                    </a>
+                  ))}
+                </div>
+              </div>
+            )}
+          </nav>
+        );
+      }
+
+      // Home Component
+      function Home() {
+        return (
+          <section
+            id='home'
+            className='relative h-screen flex items-center justify-center'
+          >
+            <video
+              className='absolute top-0 left-0 w-full h-full object-cover'
+              src='public/assets/videos/video1.mp4'
+              autoPlay
+              loop
+              muted
+              playsInline
+            ></video>
+            <div className='absolute inset-0 bg-black opacity-50'></div>
+            <div className='relative text-center z-10'>
+              <h2 className='text-4xl md:text-6xl font-bold mb-4'>
+                Cavaleiros do Zodíaco
+              </h2>
+              <p className='text-xl md:text-2xl'>
+                A lendária saga dos cavaleiros do zodíaco
+              </p>
+            </div>
+          </section>
+        );
+      }
+
+      // History Component
+      function History() {
+        return (
+          <section id='história' className='py-16 bg-gray-800'>
+            <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
+              <h2 className='text-3xl font-bold mb-8 text-center'>História</h2>
+              <p className='text-lg leading-relaxed'>
+                Cavaleiros do Zodíaco, conhecido no Japão como Saint Seiya, é
+                uma série de mangá e anime criada por Masami Kurumada. A
+                história segue cinco guerreiros místicos chamados "Cavaleiros"
+                que lutam usando armaduras sagradas baseadas nas constelações,
+                protegendo a reencarnação da deusa Athena de forças do mal que
+                ameaçam a Terra.
+              </p>
+            </div>
+          </section>
+        );
+      }
+
+      // Wallpapers Component
+      function Wallpapers() {
+        const wallpapers = [
+          {
+            id: 1,
+            src: 'public/assets/images/cavaleiros1.jpg',
+            alt: 'Wallpaper dos 5 cavaleiros',
+          },
+          {
+            id: 2,
+            src: 'public/assets/images/cavaleiros2.jpg',
+            alt: 'Wallpaper com 4 cavaleiros',
+          },
+          {
+            id: 3,
+            src: 'public/assets/images/cavaleiros3.png',
+            alt: 'Wallpaper com 6 cavaleiros',
+          },
+          {
+            id: 4,
+            src: 'public/assets/images/cavaleiros4.png',
+            alt: 'Wallpaper com os cavaleiros',
+          },
+          {
+            id: 5,
+            src: 'public/assets/images/cavaleiros5.jpg',
+            alt: 'Wallpaper com 5 cavaleiros',
+          },
+          {
+            id: 6,
+            src: 'public/assets/images/cavaleiros6.jpg',
+            alt: 'Wallpaper com Cavaleiros de Ouro',
+          },
+        ];
+
+        const [currentIndex, setCurrentIndex] = React.useState(0);
+
+        const prevSlide = () => {
+          setCurrentIndex((prev) =>
+            prev === 0 ? wallpapers.length - 1 : prev - 1
+          );
+        };
+
+        const nextSlide = () => {
+          setCurrentIndex((prev) =>
+            prev === wallpapers.length - 1 ? 0 : prev + 1
+          );
+        };
+
+        // Auto-slide every 5 seconds
+        React.useEffect(() => {
+          const interval = setInterval(() => {
+            nextSlide();
+          }, 5000);
+          return () => clearInterval(interval);
+        }, []);
+
+        return (
+          <section id='wallpapers' className='py-16'>
+            <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
+              <h2 className='text-3xl font-bold mb-8 text-center'>
+                Wallpapers
+              </h2>
+              <div className='relative'>
+                <div className='carousel-container'>
+                  {wallpapers.map((wallpaper, index) => {
+                    const offset = index - currentIndex;
+                    const absOffset = Math.abs(offset);
+                    let className = 'carousel-item';
+                    let style = {};
+
+                    if (offset === 0) {
+                      className += ' central';
+                      style = {
+                        transform: 'translateZ(100px) scale(1)',
+                        left: '50%',
+                        marginLeft: '-150px',
+                      };
+                    } else if (absOffset === 1) {
+                      className += ' side';
+                      style = {
+                        transform: 'translateZ(-50px) scale(0.8)',
+                        left: offset > 0 ? '75%' : '25%',
+                        marginLeft: offset > 0 ? '-75px' : '-225px',
+                      };
+                    } else {
+                      className += ' far';
+                      style = {
+                        transform: 'translateZ(-100px) scale(0.6)',
+                        left: offset > 0 ? '90%' : '10%',
+                        marginLeft: offset > 0 ? '-30px' : '-270px',
+                      };
+                    }
+
+                    return (
+                      <div
+                        key={wallpaper.id}
+                        className={className}
+                        style={style}
+                      >
+                        <img src={wallpaper.src} alt={wallpaper.alt} />
+                        {offset === 0 && (
+                          <a
+                            href={wallpaper.src}
+                            download
+                            className='absolute bottom-4 right-4 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded'
+                          >
+                            Baixar
+                          </a>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+                <button
+                  onClick={prevSlide}
+                  className='absolute top-1/2 left-4 transform -translate-y-1/2 bg-gray-800 bg-opacity-50 hover:bg-opacity-75 text-white p-2 rounded-full'
+                >
+                  <svg
+                    className='w-6 h-6'
+                    fill='none'
+                    stroke='currentColor'
+                    viewBox='0 0 24 24'
+                    xmlns='http://www.w3.org/2000/svg'
+                  >
+                    <path
+                      strokeLinecap='round'
+                      strokeLinejoin='round'
+                      strokeWidth='2'
+                      d='M15 19l-7-7 7-7'
+                    />
+                  </svg>
+                </button>
+                <button
+                  onClick={nextSlide}
+                  className='absolute top-1/2 right-4 transform -translate-y-1/2 bg-gray-800 bg-opacity-50 hover:bg-opacity-75 text-white p-2 rounded-full'
+                >
+                  <svg
+                    className='w-6 h-6'
+                    fill='none'
+                    stroke='currentColor'
+                    viewBox='0 0 24 24'
+                    xmlns='http://www.w3.org/2000/svg'
+                  >
+                    <path
+                      strokeLinecap='round'
+                      strokeLinejoin='round'
+                      strokeWidth='2'
+                      d='M9 5l7 7-7 7'
+                    />
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </section>
+        );
+      }
+
+      // Trailer Component
+      function Trailer() {
+        return (
+          <section id='trailer' className='py-16 bg-gray-800'>
+            <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
+              <h2 className='text-3xl font-bold mb-8 text-center'>Trailer</h2>
+              <div className='relative' style={{ paddingBottom: '56.25%' }}>
+                <iframe
+                  className='absolute top-0 left-0 w-full h-full'
+                  src='https://www.youtube.com/embed/55sMzwXliMc?si=Ao5N8pFj3bnbyZg6'
+                  title='Trailer Cavaleiros do Zodíaco'
+                  frameBorder='0'
+                  allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture'
+                  allowFullScreen
+                ></iframe>
+              </div>
+            </div>
+          </section>
+        );
+      }
+
+      // Characters Component
+      function Characters() {
+        const characters = [
+          {
+            id: 1,
+            name: 'Seiya de Pégaso',
+            src: 'public/assets/images/Seiya.jpg',
+            desc: 'O protagonista corajoso e leal.',
+          },
+          {
+            id: 2,
+            name: 'Shiryu de Dragão',
+            src: 'public/assets/images/Shiryu.jpg',
+            desc: 'O cavaleiro sábio e disciplinado.',
+          },
+          {
+            id: 3,
+            name: 'Shun de Andrômeda',
+            src: 'public/assets/images/Shun de Andromeda.png',
+            desc: 'O defensor pacífico, com uma força que transcende sua gentileza.',
+          },
+          {
+            id: 4,
+            name: 'Hyoga de Cisne',
+            src: 'public/assets/images/Hyoga.jpg',
+            desc: 'O Cavaleiro de Cisne, frio e determinado, com um coração que brilha mesmo no gelo.',
+          },
+          {
+            id: 5,
+            name: 'Ikky de Fênix',
+            src: 'public/assets/images/Ikki.jpg',
+            desc: 'O cavaleiro de bronze solitário e poderoso.',
+          },
+          {
+            id: 6,
+            name: 'Shaka de Virgem',
+            src: 'public/assets/images/Shaka.png',
+            desc: 'O Cavaleiro de Ouro mais sábio e místico.',
+          },
+          {
+            id: 7,
+            name: 'Saori Kido',
+            src: 'public/assets/images/Saori.jpg',
+            desc: 'A reencarnação de Atena, a deusa do amor e da sabedoria.',
+          },
+          {
+            id: 8,
+            name: 'Dohko de Libra',
+            src: 'public/assets/images/Dohko.png',
+            desc: 'O Cavaleiro sábio e paciente, guardião da justiça e da sabedoria.',
+          },
+          {
+            id: 9,
+            name: 'Shura de Capricórnio',
+            src: 'public/assets/images/Shura.jpg',
+            desc: 'Shura, o Cavaleiro de Ouro mais fiel a Atena, com a Excalibur como sua fiel companheira.',
+          },
+        ];
+
+        const [enlargedImage, setEnlargedImage] = React.useState(null);
+
+        const openImage = (src, alt) => {
+          setEnlargedImage({ src, alt });
+        };
+
+        const closeImage = () => {
+          setEnlargedImage(null);
+        };
+
+        return (
+          <section id='personagens' className='py-16'>
+            <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
+              <h2 className='text-3xl font-bold mb-8 text-center'>
+                Personagens
+              </h2>
+              <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6'>
+                {characters.map((character) => (
+                  <div
+                    key={character.id}
+                    className='bg-gray-700 rounded-lg overflow-hidden'
+                  >
+                    <div
+                      className='relative cursor-pointer'
+                      onMouseEnter={() =>
+                        openImage(character.src, character.name)
+                      }
+                      onMouseLeave={closeImage}
+                    >
+                      <img
+                        src={character.src}
+                        alt={character.name}
+                        className='w-full h-64 object-cover'
+                      />
+                    </div>
+                    <div className='p-4'>
+                      <h3 className='text-xl font-semibold'>
+                        {character.name}
+                      </h3>
+                      <p className='mt-2'>{character.desc}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              {enlargedImage && (
+                <div className='fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50'>
+                  <div className='relative max-w-4xl w-full'>
+                    <img
+                      src={enlargedImage.src}
+                      alt={enlargedImage.alt}
+                      className='w-full h-auto max-h-[80vh] object-contain rounded-lg'
+                    />
+                    <button
+                      onClick={closeImage}
+                      className='absolute top-2 right-2 bg-gray-800 hover:bg-gray-700 text-white p-2 rounded-full'
+                    >
+                      <svg
+                        className='w-6 h-6'
+                        fill='none'
+                        stroke='currentColor'
+                        viewBox='0 0 24 24'
+                        xmlns='http://www.w3.org/2000/svg'
+                      >
+                        <path
+                          strokeLinecap='round'
+                          strokeLinejoin='round'
+                          strokeWidth='2'
+                          d='M6 18L18 6M6 6l12 12'
+                        />
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          </section>
+        );
+      }
+
+      // Movies Component
+      function Movies() {
+        const movies = [
+          {
+            id: 1,
+            title: 'A Guerra Galáctica',
+            src: 'https://www.youtube.com/embed/JveboWS_RC8?si=NJqciQ_xNY2RTC5O', // Substitua por URL real do YouTube
+            desc: 'Início da história dos cinco cavaleiros de bronze, a Guerra Galáctica mostra alguns dos personagens escolhidos para servirem a reencarnação de Athena.',
+          },
+          {
+            id: 2,
+            title: 'Cavaleiros Negros',
+            src: 'https://www.youtube.com/embed/kbZN25fpOAs?si=BFiRrA0Uy9-_Mb8D', // Substitua por URL real do YouTube
+            desc: 'Os Cavaleiros Negros são como cópias dos Cavaleiros de Atena, mas se opõem à deusa e lutam pelo mal.',
+          },
+          {
+            id: 3,
+            title: 'Forças Ocultas no Santuário e Os Cavaleiros de Prata ',
+            src: 'https://www.youtube.com/embed/Njx0h57skck?si=ITCPeQp2E6zvnUIm', // Substitua por URL real do YouTube
+            desc: 'O arco "Forças Ocultas" é uma saga que os Cavaleiros de Bronze enfrentam a organização do Santuário, que busca dominar o mundo e confronta os Cavaleiros de Bronze fiéis à deusa Atena. Os Cavaleiros de Prata são enviados para unir os Cavaleiros de Bronze, que traíram as regras do Santuário.',
+          },
+          {
+            id: 4,
+            title: 'Cavaleiros de Ouro',
+            src: 'https://www.youtube.com/embed/IyLkYYYkNlI?si=yzPuK4j-WdBz3Ark', // Substitua por URL real do YouTube
+            desc: 'Os Cavaleiros de Ouro são a elite dos Cavaleiros de Atena, representando os 12 signos do zodíaco. São os guardiões do Santuário e os mais poderosos cavaleiros da ordem, cada um protegendo uma das Doze Casas Zodiacais. ',
+          },
+          {
+            id: 5,
+            title: 'A Batalha das Doze Casas',
+            src: 'https://www.youtube.com/embed/Dz6yfKgnDK4?si=HO_nLaVXJWNKLjPP', // Substitua por URL real do YouTube
+            desc: 'Os cinco Cavaleiros de bronze desafiam corajosamente os doze Cavaleiros de Ouro, os mais poderosos de todos os cavaleiros.',
+          },
+          {
+            id: 6,
+            title: 'A Batalha de Asgard e A Batalha de Poseidon',
+            src: 'https://www.youtube.com/embed/fg3OX93bdwY?si=OqtbJ0d0CCL-gdiP', // Substitua por URL real do YouTube
+            desc: 'Em Saga de Asgard, Hilda de Polaris é a representante do deus Odin, na Terra, tendo como missão garantir a paz em Asgard. A Saga de Poseidon em Os Cavaleiros do Zodíaco é uma luta contra o Deus do Mar, Poseidon, que busca inundar o mundo e vingar-se dos humanos.',
+          },
+          {
+            id: 7,
+            title: 'A Saga de Hades',
+            src: 'https://www.youtube.com/embed/cuP80xa16_8?si=XLR8Pa3rmhZHszYu', // Substitua por URL real do YouTube
+            desc: 'A Saga de Hades nos Cavaleiros do Zodíaco conta a história do resgate de Atena, a deusa da sabedoria e da batalha dos Cavaleiros de Bronze contra os Espectros de Hades e o próprio Imperador do Inferno.',
+          },
+          {
+            id: 8,
+            title: 'A Lenda do Santuário',
+            src: 'https://www.youtube.com/embed/KsR3zwu_1_w?si=3IFI3yUY7KFA7xH4', // Substitua por URL real do YouTube
+            desc: 'Um filme em CG que reimagina a saga do Santuário.',
+          },
+        ];
+
+        return (
+          <section id='filmes' className='py-16 bg-gray-800'>
+            <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
+              <h2 className='text-3xl font-bold mb-8 text-center'>Filmes</h2>
+              <div className='grid grid-cols-1 sm:grid-cols-2 gap-6'>
+                {movies.map((movie) => (
+                  <div
+                    key={movie.id}
+                    className='bg-gray-700 rounded-lg overflow-hidden'
+                  >
+                    <div
+                      className='relative'
+                      style={{
+                        paddingBottom: '56.25%' /* 16:9 aspect ratio */,
+                      }}
+                    >
+                      <iframe
+                        className='absolute top-0 left-0 w-full h-full'
+                        src={movie.src}
+                        title={movie.title}
+                        frameBorder='0'
+                        allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture'
+                        allowFullScreen
+                      ></iframe>
+                    </div>
+                    <div className='p-4'>
+                      <h3 className='text-xl font-semibold'>{movie.title}</h3>
+                      <p className='mt-2'>{movie.desc}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+        );
+      }
+
+      // Footer Component
+      function Footer() {
+        return (
+          <footer className='bg-gray-800 text-white py-6'>
+            <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center'>
+              <p className='text-sm font-bold'>
+                © Todos direitos reservados. Projeto criado apenas para fins
+                educacionais. Todo conteúdo de imagem e vídeo possui licença
+                livre.
+              </p>
+            </div>
+          </footer>
+        );
+      }
+
+      // App Component
+      function App() {
+        return (
+          <div className='min-h-screen flex flex-col'>
+            <Navbar />
+            <main className='flex-grow'>
+              <Home />
+              <History />
+              <Wallpapers />
+              <Trailer />
+              <Characters />
+              <Movies />
+            </main>
+            <Footer />
+          </div>
+        );
+      }
+
+      // Render the App with createRoot
+      const root = ReactDOM.createRoot(document.getElementById('root'));
+      root.render(<App />);
+    </script>
+  </body>
+</html>
